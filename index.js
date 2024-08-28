@@ -1,20 +1,24 @@
 const express = require('express');
 const app = express();
+const port = 3000;
 
-// Middleware to parse JSON
-app.use(express.json());
+// Import the products router
+const productsRouter = require('./products.js');
 
-// Import and use the products routes
-const productsRoutes = require('./routes/products');
-app.use('/api', productsRoutes);
-
-// Default Route for Testing
-app.get('/', (req, res) => {
-    res.send('Top Products Microservice is running!');
+// Middleware to handle errors globally
+app.use((err, req, res, next) => {
+    console.error('Error Details:', err.message);
+    res.status(500).send('Internal Server Error');
 });
 
-// Start the Server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// Use the products router for API routes
+app.use('/api', productsRouter);
+
+// Route for root path
+app.get('/', (req, res) => {
+    res.send('Welcome to the Top Products API');
+});
+
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
 });
